@@ -71,16 +71,16 @@ useEffect(() => {
   }
 
   return (
-    <main className="w-screen h-screen bg-transparent overflow-visible p-4">
+    <main className="w-screen h-screen bg-transparent overflow-hidden">
 
       <div className="w-fit h-fit flex items-center justify-center">
 
         <div
   className="grid grid-cols-[300px_590px_300px] gap-3"
-  style={{
-    transform: `scale(${scale})`,
-    transformOrigin: "top left",
-  }}
+style={{
+  transform: `translate(4px, 4px) scale(${scale * 0.98})`,
+  transformOrigin: "top left",
+}}
 >
 
           <PlayerCard player={leftPlayer} />
