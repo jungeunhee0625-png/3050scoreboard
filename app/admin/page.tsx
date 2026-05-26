@@ -250,6 +250,12 @@ const [awayTeam, setAwayTeam] = useState("스타강의반");
 
 const [homePredict, setHomePredict] = useState("0:0 승");
 const [awayPredict, setAwayPredict] = useState("0:0 승");
+const [matchHome, setMatchHome] = useState("스타강의반");
+const [matchAway, setMatchAway] = useState("제이디");
+
+const [matchRound, setMatchRound] = useState("1라운드 1주차 1경기");
+const [matchDate, setMatchDate] = useState("05.12 TUE 21:30");
+const [matchBJ, setMatchBJ] = useState("BJ-Chiwoo");
 const saveTeamOverlay = async (
   side: "HOME" | "AWAY"
 ) => {
@@ -768,11 +774,127 @@ const saveTeamOverlay = async (
 )}
 
 {tab === "matchup" && (
-  <section className="rounded-2xl bg-slate-900 p-8">
-    <h1 className="text-[40px] font-black text-pink-400">매치업 관리</h1>
-    <p className="mt-3 text-[20px] text-slate-300">TODAY'S MATCH UP 화면 제작 예정</p>
+  <section className="flex flex-col items-center">
+
+    {/* 관리자 */}
+    <div className="mb-8 grid w-full max-w-[1400px] grid-cols-2 gap-6 rounded-2xl bg-slate-900 p-6">
+
+      <div className="rounded-xl bg-slate-800 p-5">
+        <div className="mb-4 text-[28px] font-black text-cyan-300">
+          HOME TEAM
+        </div>
+
+        <select
+          className="mb-4 w-full rounded border border-slate-600 bg-slate-700 p-3 text-[18px]"
+          value={matchHome}
+          onChange={(e) => setMatchHome(e.target.value)}
+        >
+          {teams.map((team) => (
+            <option key={team}>{team}</option>
+          ))}
+        </select>
+
+        <input
+          className="w-full rounded border border-slate-600 bg-slate-700 p-3 text-[18px]"
+          value={matchRound}
+          onChange={(e) => setMatchRound(e.target.value)}
+        />
+      </div>
+
+      <div className="rounded-xl bg-slate-800 p-5">
+        <div className="mb-4 text-[28px] font-black text-pink-300">
+          AWAY TEAM
+        </div>
+
+        <select
+          className="mb-4 w-full rounded border border-slate-600 bg-slate-700 p-3 text-[18px]"
+          value={matchAway}
+          onChange={(e) => setMatchAway(e.target.value)}
+        >
+          {teams.map((team) => (
+            <option key={team}>{team}</option>
+          ))}
+        </select>
+
+        <input
+          className="w-full rounded border border-slate-600 bg-slate-700 p-3 text-[18px]"
+          value={matchDate}
+          onChange={(e) => setMatchDate(e.target.value)}
+        />
+      </div>
+
+    </div>
+
+    <input
+      className="mb-8 w-[500px] rounded border border-slate-600 bg-slate-700 p-3 text-[18px]"
+      value={matchBJ}
+      onChange={(e) => setMatchBJ(e.target.value)}
+    />
+
+    {/* 방송 미리보기 */}
+    <div className="relative h-[1080px] w-[1920px] overflow-hidden bg-transparent">
+
+      <div className="absolute inset-0 bg-gradient-to-r from-slate-100 via-sky-300 to-sky-400" />
+
+      <div className="absolute left-1/2 top-[40px] -translate-x-1/2 text-center">
+
+        <div className="text-[90px] font-black italic text-[#083067]">
+          TODAY'S MATCH UP
+        </div>
+
+        <div className="text-[50px] font-black italic text-yellow-300">
+          {matchRound}
+        </div>
+
+      </div>
+
+      {/* 팀 로고 */}
+      <div className="absolute left-[180px] top-[250px]">
+        <img
+          src={`/team-profile/${teamProfiles[matchHome as keyof typeof teamProfiles].logo}.png`}
+          className="h-[500px] w-[500px] object-contain"
+        />
+      </div>
+
+      <div className="absolute right-[180px] top-[250px]">
+        <img
+          src={`/team-profile/${teamProfiles[matchAway as keyof typeof teamProfiles].logo}.png`}
+          className="h-[500px] w-[500px] object-contain"
+        />
+      </div>
+
+      {/* 중앙 */}
+      <div className="absolute left-1/2 top-[260px] -translate-x-1/2 text-center">
+
+        <div className="text-[90px] font-black text-white">
+          {teamProfiles[matchHome as keyof typeof teamProfiles].shortName}
+        </div>
+
+        <div className="my-8 text-[130px] font-black italic text-[#083067]">
+          VS
+        </div>
+
+        <div className="text-[90px] font-black text-white">
+          {teamProfiles[matchAway as keyof typeof teamProfiles].shortName}
+        </div>
+
+        <div className="mt-16 border-t border-b border-[#083067]/30 py-6">
+          <div className="text-[70px] font-black italic text-[#083067]">
+            {matchDate}
+          </div>
+
+          <div className="text-[60px] font-black italic text-[#083067]">
+            {matchBJ}
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
   </section>
-)}      </div>
+)}
+      </div>
     </main>
   );
 }
