@@ -96,6 +96,9 @@ const scoreDefault = {
 const SHEET_CSV =
   "https://docs.google.com/spreadsheets/d/1F6Ey-whXAsTSMCWVmfexGd77jj6WDgv6Z7hkK3BHahs/export?format=csv&gid=1009621464";
 
+const ENTRY_SHEET_CSV =
+  "https://docs.google.com/spreadsheets/d/1nKJmEy6h3AL0p-kCyPfLPV1x4rUFCEhxGMQfzlAXypo/export?format=csv&gid=0";
+
 type Player = {
   player: string;
   race: string;
@@ -109,7 +112,13 @@ type Player = {
   rank: string;
   awards: string;
 };
-
+type EntryPlayer = {
+  set: string;
+  map: string;
+  tierCombo: string;
+  team: string;
+  player: string;
+};
 const maps = [
   {
     name: "매치포인트",
@@ -238,7 +247,7 @@ export default function AdminPage() {
 >("score");
 
   const [scoreData, setScoreData] = useState(scoreDefault);
-
+const [entryPlayers, setEntryPlayers] = useState<EntryPlayer[]>([]);
   const [players, setPlayers] = useState<Player[]>([]);
   const [leftName, setLeftName] = useState("");
   const [rightName, setRightName] = useState("");
@@ -267,6 +276,31 @@ const saveMatchupOverlay = async () => {
 
   alert("매치업 방송 적용 완료!");
 };
+const [entryHome, setEntryHome] = useState("제이디");
+const [entryAway, setEntryAway] = useState("스타강의반");
+
+const [entryRound, setEntryRound] = useState("1라운드 1주차");
+const [entryList, setEntryList] = useState([
+  { left: "", setName: "", map: "", right: "" },
+  { left: "", setName: "", map: "", right: "" },
+  { left: "", setName: "", map: "", right: "" },
+  { left: "", setName: "", map: "", right: "" },
+  { left: "", setName: "", map: "", right: "" },
+  { left: "", setName: "", map: "", right: "" },
+  { left: "", setName: "", map: "", right: "" },
+]);
+
+const saveEntryOverlay = async () => {
+  await setDoc(doc(db, "entryOverlay", "current"), {
+    home: teamProfiles[entryHome as keyof typeof teamProfiles],
+    away: teamProfiles[entryAway as keyof typeof teamProfiles],
+    round: entryRound,
+    sets: entryList,
+  });
+
+  alert("엔트리 방송 적용 완료!");
+};
+
 const saveTeamOverlay = async (
   side: "HOME" | "AWAY"
 ) => {
@@ -289,54 +323,78 @@ const saveTeamOverlay = async (
     }
   );
 };
-  useEffect(() => {
-    const unsub = onSnapshot(doc(db, "scoreboard", "current"), (snapshot) => {
-      if (snapshot.exists()) {
-        setScoreData(snapshot.data() as typeof scoreDefault);
-      }
+useEffect(() => {
+  fetch(SHEET_CSV)
+    .then((res) => res.text())
+    .then((text) => {
+      const rows = parseCSV(text);
+      const header = rows[0];
+
+      const data = rows
+        .slice(1)
+        .map((r) => {
+          const obj: Record<string, string> = {};
+
+          header.forEach((h, i) => {
+            obj[h.trim()] = r[i]?.trim() || "";
+          });
+
+          return {
+            player: obj["플레이어"] || "",
+            rank: obj["랭킹"] || "",
+            race: obj["종족"] || "",
+            tier: obj["티어"] || "",
+            zerg: obj["저그전"] || "",
+            protoss: obj["프로토스전"] || "",
+            terran: obj["테란전"] || "",
+            total: obj["총전적"] || "",
+            winrate: obj["승률"] || "",
+            elo: obj["ELO"] || "",
+            awards: obj["수상경력"] || "",
+          };
+        });
+
+      setPlayers(data);
     });
+}, []);
 
-    return () => unsub();
-  }, []);
 
-  useEffect(() => {
-    fetch(SHEET_CSV)
-      .then((res) => res.text())
-      .then((text) => {
-        const rows = parseCSV(text);
-        const header = rows[0];
+/* 👇 여기 추가 */
+const entryMaps = [
+  ...new Set(entryPlayers.map((p) => p.map).filter(Boolean)),
+];
 
-        const data = rows
-          .slice(1)
-          .map((r) => {
-            const obj: Record<string, string> = {};
+const entryCombos = [
+  ...new Set(entryPlayers.map((p) => p.tierCombo).filter(Boolean)),
+];
+/* 👇 바로 여기 추가 */
+useEffect(() => {
+  fetch(ENTRY_SHEET_CSV)
+    .then((res) => res.text())
+    .then((text) => {
+      const rows = parseCSV(text);
+      const header = rows[0].map((h) => h.trim());
 
-            header.forEach((h, i) => {
-              obj[h.trim()] = r[i]?.trim() || "";
-            });
+      const setIndex = header.indexOf("세트");
+      const mapIndex = header.indexOf("맵");
+      const comboIndex = header.indexOf("티어조합");
+      const playerIndex = header.indexOf("선수명");
+      const teamIndex = header.indexOf("팀");
 
-            return {
-              player: obj["플레이어"] || "",
-              rank: obj["랭킹"] || "",
-              race: obj["종족"] || "",
-              tier: obj["티어"] || "",
-              zerg: obj["저그전"] || "",
-              protoss: obj["프로토스전"] || "",
-              terran: obj["테란전"] || "",
-              total: obj["총전적"] || "",
-              winrate: obj["승률"] || "",
-              elo: obj["ELO"] || "",
-              awards: obj["수상경력"] || "",
-            };
-          })
-          .filter((p) => p.player)
-          .sort((a, b) => a.player.localeCompare(b.player));
+      const data = rows
+        .slice(1)
+        .map((r) => ({
+          set: r[setIndex]?.trim() || "",
+          map: r[mapIndex]?.trim() || "",
+          tierCombo: r[comboIndex]?.trim() || "",
+          player: r[playerIndex]?.trim() || "",
+          team: r[teamIndex]?.trim() || "",
+        }))
+        .filter((p) => p.player);
 
-        setPlayers(data);
-        setLeftName(data[0]?.player || "");
-        setRightName(data[1]?.player || "");
-      });
-  }, []);
+      setEntryPlayers(data);
+    });
+}, []);
 
   const updateScore = async (key: string, value: string | number) => {
     const newData = { ...scoreData, [key]: value };
@@ -779,8 +837,193 @@ const saveTeamOverlay = async (
 
 {tab === "entry" && (
   <section className="rounded-2xl bg-slate-900 p-8">
-    <h1 className="text-[40px] font-black text-green-400">엔트리 관리</h1>
-    <p className="mt-3 text-[20px] text-slate-300">TODAY'S ENTRY 화면 제작 예정</p>
+
+    <div className="rounded-2xl bg-slate-800/60 p-8">
+
+      <h1 className="text-[54px] font-black text-green-400">
+        엔트리 관리
+      </h1>
+
+      <p className="mt-3 text-[22px] text-slate-300">
+        TODAY'S ENTRY 방송 화면에 들어갈 엔트리를 설정합니다.
+      </p>
+
+    </div>
+
+    {/* 팀 선택 */}
+    <div className="mt-8 grid grid-cols-2 gap-6">
+
+      <div className="rounded-2xl bg-slate-800/60 p-6">
+        <div className="mb-3 text-[22px] font-black text-white">
+          HOME 팀 선택
+        </div>
+
+        <select
+          value={entryHome}
+          onChange={(e) => setEntryHome(e.target.value)}
+          className="w-full rounded-xl border border-slate-600 bg-slate-700 p-5 text-[26px] text-white"
+        >
+          {teams.map((team) => (
+            <option key={team}>{team}</option>
+          ))}
+        </select>
+      </div>
+
+      <div className="rounded-2xl bg-slate-800/60 p-6">
+        <div className="mb-3 text-[22px] font-black text-white">
+          AWAY 팀 선택
+        </div>
+
+        <select
+          value={entryAway}
+          onChange={(e) => setEntryAway(e.target.value)}
+          className="w-full rounded-xl border border-slate-600 bg-slate-700 p-5 text-[26px] text-white"
+        >
+          {teams.map((team) => (
+            <option key={team}>{team}</option>
+          ))}
+        </select>
+      </div>
+
+    </div>
+
+    {/* 라운드 */}
+    <div className="mt-6 rounded-2xl bg-slate-800/60 p-6">
+
+      <div className="mb-3 text-[22px] font-black text-white">
+        라운드
+      </div>
+
+      <input
+        value={entryRound}
+        onChange={(e) => setEntryRound(e.target.value)}
+        className="w-full rounded-xl border border-slate-600 bg-slate-700 p-5 text-[26px] text-white"
+      />
+
+    </div>
+
+    {/* 세트 */}
+    <div className="mt-8 flex flex-col gap-4">
+
+      {entryList.map((set, index) => (
+
+        <div
+          key={index}
+          className="rounded-2xl border border-slate-700 bg-slate-800/60 p-5"
+        >
+
+          <div className="mb-5 flex items-center gap-4">
+
+            <div className="flex h-[52px] w-[52px] items-center justify-center rounded-full bg-green-500 text-[26px] font-black text-black">
+              {index + 1}
+            </div>
+
+            <div className="text-[32px] font-black text-white">
+              세트
+            </div>
+
+          </div>
+
+          <div className="grid grid-cols-4 gap-4">
+
+{/* HOME 선수 */}
+<select
+  value={set.left}
+  onChange={(e) => {
+    const updated = [...entryList];
+    updated[index].left = e.target.value;
+    setEntryList(updated);
+  }}
+  className="rounded-xl border border-slate-600 bg-slate-700 p-4 text-[24px] text-white"
+>
+  <option value="">HOME 선수 선택</option>
+
+  {entryPlayers
+    .filter((p) => p.team === entryHome)
+    .map((p) => (
+      <option key={`${entryHome}-${p.player}`} value={p.player}>
+        {p.player}
+      </option>
+    ))}
+</select>
+
+{/* 세트명 */}
+<select
+  value={set.setName}
+  onChange={(e) => {
+    const updated = [...entryList];
+    updated[index].setName = e.target.value;
+    setEntryList(updated);
+  }}
+  className="rounded-xl border border-slate-600 bg-slate-700 p-4 text-[24px] text-white"
+>
+  <option value="">티어조합 선택</option>
+
+  {entryCombos.map((combo) => (
+    <option key={combo} value={combo}>
+      {combo}
+    </option>
+  ))}
+</select>
+
+            {/* 맵 */}
+           <select
+  value={set.map}
+  onChange={(e) => {
+    const updated = [...entryList];
+    updated[index].map = e.target.value;
+    setEntryList(updated);
+  }}
+  className="rounded-xl border border-slate-600 bg-slate-700 p-4 text-[24px] text-white"
+>
+  <option value="">맵 선택</option>
+
+  {entryMaps.map((map) => (
+    <option key={map} value={map}>
+      {map}
+    </option>
+  ))}
+</select>
+{/* AWAY 선수 */}
+<select
+  value={set.right}
+  onChange={(e) => {
+    const updated = [...entryList];
+    updated[index].right = e.target.value;
+    setEntryList(updated);
+  }}
+  className="rounded-xl border border-slate-600 bg-slate-700 p-4 text-[24px] text-white"
+>
+  <option value="">AWAY 선수 선택</option>
+
+  {entryPlayers
+    .filter((p) => p.team === entryAway)
+    .map((p) => (
+      <option
+        key={`${entryAway}-${p.player}`}
+        value={p.player}
+      >
+        {p.player}
+      </option>
+    ))}
+</select>
+
+          </div>
+
+        </div>
+
+      ))}
+
+    </div>
+
+    {/* 적용 버튼 */}
+    <button
+      onClick={saveEntryOverlay}
+      className="mt-8 w-full rounded-2xl bg-green-500 p-6 text-[32px] font-black text-black transition hover:bg-green-400"
+    >
+      엔트리 방송 적용
+    </button>
+
   </section>
 )}
 
@@ -847,6 +1090,7 @@ const saveTeamOverlay = async (
 >
   매치업 방송 적용
 </button>
+
     {/* 방송 미리보기 */}
     <div className="relative h-[1080px] w-[1920px] overflow-hidden bg-transparent">
 
