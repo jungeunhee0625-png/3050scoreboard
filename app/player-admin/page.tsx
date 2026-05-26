@@ -257,13 +257,35 @@ const filteredRightPlayers = players.filter((p) =>
 <input
   className="w-full p-3 mb-2 rounded bg-slate-800 border border-slate-600 text-[16px]"
   value={leftSearch}
-  onChange={(e) => setLeftSearch(e.target.value)}
+  onChange={(e) => {
+  const value = e.target.value;
+  setLeftSearch(value);
+
+  const found = players.find((p) =>
+    p.player.toLowerCase().includes(value.toLowerCase())
+  );
+
+  if (found) {
+    setLeftName(found.player);
+  }
+}}
   placeholder="왼쪽 선수 검색"
 />
               <select
                 className="w-full p-2 rounded bg-slate-800 border border-slate-600 text-[18px]"
                 value={leftName}
-                onChange={(e) => setLeftName(e.target.value)}
+                onChange={(e) => {
+  const value = e.target.value;
+  setRightSearch(value);
+
+  const found = players.find((p) =>
+    p.player.toLowerCase().includes(value.toLowerCase())
+  );
+
+  if (found) {
+    setRightName(found.player);
+  }
+}}
               >
                 {filteredLeftPlayers.map((p) => (
                   <option key={p.player}>{p.player}</option>
