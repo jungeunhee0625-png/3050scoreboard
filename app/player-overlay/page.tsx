@@ -49,7 +49,7 @@ export default function PlayerOverlayPage() {
 
       <div className="w-fit h-fit flex items-center justify-center">
 
-        <div className="grid grid-cols-[300px_590px_300px] gap-3 scale-[0.8] origin-top">
+        <div className="grid grid-cols-[300px_590px_300px] gap-3 scale-[1.1] origin-top">
 
           <PlayerCard player={leftPlayer} />
 
