@@ -45,11 +45,11 @@ export default function PlayerOverlayPage() {
   }
 
   return (
-    <main className="w-screen h-screen bg-transparent overflow-hidden">
+    <main className="w-screen h-screen bg-gradient-to-b from-cyan-400 to-blue-600 overflow-hidden">
 
       <div className="w-full h-full flex items-center justify-center">
 
-        <div className="grid grid-cols-[300px_590px_300px] gap-3">
+        <div className="grid grid-cols-[300px_590px_300px] gap-3 scale-[0.8] origin-top">
 
           <PlayerCard player={leftPlayer} />
 
@@ -67,7 +67,7 @@ export default function PlayerOverlayPage() {
 
 function PlayerCard({ player }: { player: Player }) {
   return (
-    <div className="h-[360px] bg-transparent border-[4px] border-yellow-400 text-white flex flex-col">
+    <div className="h-[360px] bg-gradient-to-b from-sky-400 to-blue-600 border-[4px] border-yellow-400 text-white flex flex-col">
 
       <div className="p-4 border-b border-yellow-300">
 
