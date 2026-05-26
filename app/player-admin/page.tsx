@@ -298,21 +298,33 @@ const filteredRightPlayers = players.filter((p) =>
 <input
   className="w-full p-3 mb-2 rounded bg-slate-800 border border-slate-600 text-[16px]"
   value={rightSearch}
-  onChange={(e) => setRightSearch(e.target.value)}
+  onChange={(e) => {
+
+    const value = e.target.value;
+
+    setRightSearch(value);
+
+    const found = players.find((p) =>
+      p.player.toLowerCase().includes(value.toLowerCase())
+    );
+
+    if (found) {
+      setRightName(found.player);
+    }
+
+  }}
   placeholder="오른쪽 선수 검색"
 />
-              <select
-                className="w-full p-2 rounded bg-slate-800 border border-slate-600 text-[18px]"
-                value={rightName}
-                onChange={(e) => setRightName(e.target.value)}
-              >
-                {filteredRightPlayers.map((p) => (
-                  <option key={p.player}>{p.player}</option>
-                ))}
-              </select>
-            </div>
 
-            <div>
+<select
+  className="w-full p-2 rounded bg-slate-800 border border-slate-600 text-[18px]"
+  value={rightName}
+  onChange={(e) => setRightName(e.target.value)}
+>
+  {filteredRightPlayers.map((p) => (
+    <option key={p.player}>{p.player}</option>
+  ))}
+</select>
 
               <div className="text-[22px] font-black mb-3">
                 2. 맵 선택
