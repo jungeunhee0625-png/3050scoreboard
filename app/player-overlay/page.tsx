@@ -45,9 +45,9 @@ export default function PlayerOverlayPage() {
   }
 
   return (
-    <main className="w-screen h-screen bg-gradient-to-b from-cyan-400 to-blue-600 overflow-hidden">
+    <main className="w-screen h-screen bg-transparent overflow-hidden">
 
-      <div className="w-full h-full flex items-center justify-center">
+      <div className="w-fit h-fit flex items-center justify-center">
 
         <div className="grid grid-cols-[300px_590px_300px] gap-3 scale-[0.8] origin-top">
 
