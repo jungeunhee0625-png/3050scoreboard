@@ -745,8 +745,17 @@ const saveTeamOverlay = async (
     </div>
 
     <div className="flex flex-col items-center gap-16 bg-transparent">
-      <TeamProfileCard side="HOME" team={teamProfiles[homeTeam]} predict={homePredict} />
-      <TeamProfileCard side="AWAY" team={teamProfiles[awayTeam]} predict={awayPredict} />
+<TeamProfileCard
+  side="HOME"
+  team={teamProfiles[homeTeam as keyof typeof teamProfiles]}
+  predict={homePredict}
+/>
+
+<TeamProfileCard
+  side="AWAY"
+  team={teamProfiles[awayTeam as keyof typeof teamProfiles]}
+  predict={awayPredict}
+/>
     </div>
   </section>
 )}
