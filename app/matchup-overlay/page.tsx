@@ -6,99 +6,223 @@ import { doc, onSnapshot } from "firebase/firestore";
 
 export default function MatchupOverlayPage() {
   const [data, setData] = useState<any>(null);
+  const [scale, setScale] = useState(1);
 
   useEffect(() => {
-
     const unsub = onSnapshot(
       doc(db, "matchupOverlay", "current"),
       (snap) => {
-        if (snap.exists()) {
-          setData(snap.data());
-        }
+        if (snap.exists()) setData(snap.data());
       }
     );
 
     return () => unsub();
+  }, []);
 
+  // 자동 축소/확대
+  useEffect(() => {
+    const resize = () => {
+      const scaleX = window.innerWidth / 1920;
+      const scaleY = window.innerHeight / 1080;
+
+      setScale(Math.min(scaleX, scaleY));
+    };
+
+    resize();
+
+    window.addEventListener("resize", resize);
+
+    return () => window.removeEventListener("resize", resize);
   }, []);
 
   if (!data) return null;
 
   return (
-    <main className="h-screen w-screen overflow-hidden bg-transparent">
-
-      <div className="flex h-full w-full items-center justify-center bg-transparent">
-
-        <div className="w-[1500px] rounded-[40px] bg-gradient-to-r from-sky-300/90 to-cyan-400/90 p-10 text-white shadow-2xl">
-
-          {/* 제목 */}
-          <div className="text-center text-[90px] font-black italic tracking-tight text-[#083067]">
-            TODAY'S MATCH UP
-          </div>
-
-          {/* 라운드 */}
-          <div className="mt-2 text-center text-[50px] font-black italic text-yellow-300">
-            {data.matchRound}
-          </div>
-
-          {/* 본문 */}
-          <div className="mt-8 grid grid-cols-[500px_1fr_500px] items-center gap-10">
-
-            {/* 왼쪽 */}
-            <div className="flex flex-col items-center">
-
-              <img
-                src={`/team-profile/${data.home.logo}.png`}
-                className="h-[500px] w-[500px] object-contain"
-              />
-
-              <div className="mt-5 text-center text-[70px] font-black text-white">
-                {data.home.shortName}
-              </div>
-
-            </div>
-
-            {/* 중앙 */}
-            <div className="flex flex-col items-center justify-center">
-
-              <div className="text-[140px] font-black italic text-[#083067]">
-                VS
-              </div>
-
-              <div className="mt-8 w-full border-y border-[#083067]/30 py-6 text-center">
-
-                <div className="text-[65px] font-black italic text-[#083067]">
-                  {data.matchDate}
-                </div>
-
-                <div className="text-[55px] font-black italic text-[#083067]">
-                  {data.matchBJ}
-                </div>
-
-              </div>
-
-            </div>
-
-            {/* 오른쪽 */}
-            <div className="flex flex-col items-center">
-
-              <img
-                src={`/team-profile/${data.away.logo}.png`}
-                className="h-[500px] w-[500px] object-contain"
-              />
-
-              <div className="mt-5 text-center text-[70px] font-black text-white">
-                {data.away.shortName}
-              </div>
-
-            </div>
-
-          </div>
-
+    <main
+      style={{
+        width: "100vw",
+        height: "100vh",
+        overflow: "hidden",
+        background: "transparent",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      {/* 자동 스케일 */}
+      <div
+        style={{
+          width: 1920,
+          height: 1080,
+          position: "relative",
+          transform: `scale(${scale})`,
+          transformOrigin: "center center",
+          flexShrink: 0,
+        }}
+      >
+        {/* 제목 */}
+        <div
+          style={{
+            position: "absolute",
+            top: 48,
+            left: 0,
+            width: "100%",
+            textAlign: "center",
+            fontSize: 92,
+            fontWeight: 900,
+            fontStyle: "italic",
+            color: "#07366f",
+            lineHeight: 1,
+          }}
+        >
+          TODAY&apos;S MATCH UP
         </div>
 
-      </div>
+        {/* 라운드 */}
+        <div
+          style={{
+            position: "absolute",
+            top: 155,
+            left: 0,
+            width: "100%",
+            textAlign: "center",
+            fontSize: 44,
+            fontWeight: 900,
+            fontStyle: "italic",
+            color: "#ffe21a",
+          }}
+        >
+          {data.matchRound}
+        </div>
 
+        {/* HOME */}
+        <img
+          src={`/team-profile/${data.home.logo}.png`}
+          style={{
+            position: "absolute",
+            left: 180,
+            top: 285,
+            width: 500,
+            height: 500,
+            objectFit: "contain",
+          }}
+        />
+
+        {/* AWAY */}
+        <img
+          src={`/team-profile/${data.away.logo}.png`}
+          style={{
+            position: "absolute",
+            right: 180,
+            top: 285,
+            width: 500,
+            height: 500,
+            objectFit: "contain",
+          }}
+        />
+
+        {/* 중앙 */}
+        <div
+          style={{
+            position: "absolute",
+            top: 315,
+            left: "50%",
+            transform: "translateX(-50%)",
+            width: 620,
+            textAlign: "center",
+          }}
+        >
+          <div
+            style={{
+              fontSize: 92,
+              fontWeight: 900,
+              color: "white",
+              lineHeight: 1,
+              whiteSpace: "nowrap",
+            }}
+          >
+            {data.home.shortName}
+          </div>
+
+          <div
+            style={{
+              marginTop: 60,
+              fontSize: 130,
+              fontWeight: 900,
+              fontStyle: "italic",
+              color: "#07366f",
+              lineHeight: 1,
+            }}
+          >
+            VS
+          </div>
+
+          <div
+            style={{
+              marginTop: 60,
+              fontSize: 92,
+              fontWeight: 900,
+              color: "white",
+              lineHeight: 1,
+              whiteSpace: "nowrap",
+            }}
+          >
+            {data.away.shortName}
+          </div>
+
+          {/* 선 */}
+          <div
+            style={{
+              marginTop: 85,
+              marginLeft: "auto",
+              marginRight: "auto",
+              width: 520,
+              height: 2,
+              background: "rgba(7, 54, 111, 0.25)",
+            }}
+          />
+
+          {/* 날짜 */}
+          <div
+            style={{
+              marginTop: 40,
+              fontSize: 58,
+              fontWeight: 900,
+              fontStyle: "italic",
+              color: "#07366f",
+              lineHeight: 1,
+            }}
+          >
+            {data.matchDate}
+          </div>
+
+          {/* BJ */}
+          <div
+            style={{
+              marginTop: 28,
+              fontSize: 52,
+              fontWeight: 900,
+              fontStyle: "italic",
+              color: "#07366f",
+              lineHeight: 1,
+            }}
+          >
+            {data.matchBJ}
+          </div>
+
+          {/* 아래 선 */}
+          <div
+            style={{
+              marginTop: 35,
+              marginLeft: "auto",
+              marginRight: "auto",
+              width: 520,
+              height: 2,
+              background: "rgba(7, 54, 111, 0.25)",
+            }}
+          />
+        </div>
+      </div>
     </main>
   );
 }
