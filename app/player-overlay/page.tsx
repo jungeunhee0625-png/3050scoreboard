@@ -114,7 +114,7 @@ function PlayerCard({ player }: { player: Player }) {
 
 function MapCard({ map }: { map: any }) {
   return (
-    <div className="h-[360px] bg-transparent border-[4px] border-yellow-400 text-white p-4">
+    <div className="h-[360px] bg-gradient-to-b from-sky-400 to-blue-600 border-[4px] border-yellow-400 text-white p-4">
 
       <div className="text-center">
 
