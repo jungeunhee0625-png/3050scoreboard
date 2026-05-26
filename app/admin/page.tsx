@@ -256,6 +256,17 @@ const [matchAway, setMatchAway] = useState("제이디");
 const [matchRound, setMatchRound] = useState("1라운드 1주차 1경기");
 const [matchDate, setMatchDate] = useState("05.12 TUE 21:30");
 const [matchBJ, setMatchBJ] = useState("BJ-Chiwoo");
+const saveMatchupOverlay = async () => {
+  await setDoc(doc(db, "matchupOverlay", "current"), {
+    home: teamProfiles[matchHome as keyof typeof teamProfiles],
+    away: teamProfiles[matchAway as keyof typeof teamProfiles],
+    matchRound,
+    matchDate,
+    matchBJ,
+  });
+
+  alert("매치업 방송 적용 완료!");
+};
 const saveTeamOverlay = async (
   side: "HOME" | "AWAY"
 ) => {
@@ -830,7 +841,12 @@ const saveTeamOverlay = async (
       value={matchBJ}
       onChange={(e) => setMatchBJ(e.target.value)}
     />
-
+<button
+  onClick={saveMatchupOverlay}
+  className="mb-8 w-[500px] rounded-xl bg-pink-500 p-3 text-[20px] font-black hover:bg-pink-400"
+>
+  매치업 방송 적용
+</button>
     {/* 방송 미리보기 */}
     <div className="relative h-[1080px] w-[1920px] overflow-hidden bg-transparent">
 
