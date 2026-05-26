@@ -253,10 +253,10 @@ const [awayPredict, setAwayPredict] = useState("0:0 승");
 const saveTeamOverlay = async (
   side: "HOME" | "AWAY"
 ) => {
-  const selectedTeam =
-    side === "HOME"
-      ? teamProfiles[homeTeam]
-      : teamProfiles[awayTeam];
+ const selectedTeam =
+  side === "HOME"
+    ? teamProfiles[homeTeam as keyof typeof teamProfiles]
+    : teamProfiles[awayTeam as keyof typeof teamProfiles];
 
   const predict =
     side === "HOME"
