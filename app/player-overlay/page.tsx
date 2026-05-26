@@ -71,7 +71,7 @@ useEffect(() => {
   }
 
   return (
-    <main className="w-screen h-screen bg-transparent overflow-hidden">
+    <main className="w-screen h-screen bg-transparent overflow-visible p-4">
 
       <div className="w-fit h-fit flex items-center justify-center">
 
