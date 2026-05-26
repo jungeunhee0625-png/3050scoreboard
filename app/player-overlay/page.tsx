@@ -22,23 +22,49 @@ export default function PlayerOverlayPage() {
   const [leftPlayer, setLeftPlayer] = useState<Player | null>(null);
   const [rightPlayer, setRightPlayer] = useState<Player | null>(null);
   const [map, setMap] = useState<any>(null);
+  const [scale, setScale] = useState(1);
+useEffect(() => {
+  const resize = () => {
 
-  useEffect(() => {
-    const unsub = onSnapshot(
-      doc(db, "playerOverlay", "current"),
-      (snap) => {
-        const data = snap.data();
+    const baseW = 1200;
+    const baseH = 360;
 
-        if (!data) return;
-
-        setLeftPlayer(data.leftPlayer);
-        setRightPlayer(data.rightPlayer);
-        setMap(data.map);
-      }
+    setScale(
+      Math.min(
+        window.innerWidth / baseW,
+        window.innerHeight / baseH
+      )
     );
+  };
 
-    return () => unsub();
-  }, []);
+  resize();
+
+  window.addEventListener("resize", resize);
+
+  return () => window.removeEventListener("resize", resize);
+
+}, []);
+
+useEffect(() => {
+
+  const unsub = onSnapshot(
+    doc(db, "playerOverlay", "current"),
+    (snap) => {
+
+      const data = snap.data();
+
+      if (!data) return;
+
+      setLeftPlayer(data.leftPlayer);
+      setRightPlayer(data.rightPlayer);
+      setMap(data.map);
+
+    }
+  );
+
+  return () => unsub();
+
+}, []);
 
   if (!leftPlayer || !rightPlayer || !map) {
     return <div className="text-white">불러오는 중...</div>;
@@ -49,7 +75,13 @@ export default function PlayerOverlayPage() {
 
       <div className="w-fit h-fit flex items-center justify-center">
 
-        <div className="grid grid-cols-[300px_590px_300px] gap-3 scale-[1.1] origin-top">
+        <div
+  className="grid grid-cols-[300px_590px_300px] gap-3"
+  style={{
+    transform: `scale(${scale})`,
+    transformOrigin: "top left",
+  }}
+>
 
           <PlayerCard player={leftPlayer} />
 
