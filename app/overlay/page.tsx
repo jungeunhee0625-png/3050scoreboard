@@ -118,13 +118,13 @@ export default function OverlayPage() {
 
         </div>
 
-        {/* 경기 정보 */}
+         {/* 경기 정보 */}
         <div className="absolute top-[3px] left-[280px] text-[24px] font-black tracking-[-1px] text-yellow-300">
           {data.roundText}
         </div>
 
         {/* 왼쪽 선수 */}
-        <div className="absolute top-[105px] left-[55px] w-[120px] text-center text-[24px] font-black tracking-[-1px] text-black">
+        <div className="absolute top-[105px] left-[20px] w-[120px] text-center text-[21px] font-black tracking-[-1px] text-black">
           {data.leftPlayer}
         </div>
 
@@ -139,7 +139,7 @@ export default function OverlayPage() {
         </div>
 
         {/* 오른쪽 선수 */}
-        <div className="absolute top-[105px] right-[60px] w-[150px] text-center text-[24px] font-black tracking-[-1px] text-black">
+        <div className="absolute top-[105px] right-[40px] w-[150px] text-center text-[21px] font-black tracking-[-1px] text-black">
           {data.rightPlayer}
         </div>
 
