@@ -369,24 +369,26 @@ useEffect(() => {
       const rows = parseCSV(text);
       const header = rows[0].map((h) => h.trim());
 
-const setIndex = header.indexOf("세트");
-const mapIndex = header.indexOf("맵");
-const tierIndex = header.indexOf("티어");
-const comboIndex = header.indexOf("티어조합");
-const playerIndex = header.indexOf("선수명");
-const teamIndex = header.indexOf("팀");
-const raceIndex = header.indexOf("종족");
-  .slice(1)
-  .map((r) => ({
-set: r[setIndex]?.trim() || "",
-map: r[mapIndex]?.trim() || "",
-tier: r[tierIndex]?.trim() || "",
-tierCombo: r[comboIndex]?.trim() || "",
-race: r[raceIndex]?.trim() || "",
-player: r[playerIndex]?.trim() || "",
-team: r[teamIndex]?.trim() || "",
-  }))
-  .filter((p) => p.player);
+      const setIndex = header.indexOf("세트");
+      const mapIndex = header.indexOf("맵");
+      const tierIndex = header.indexOf("티어");
+      const comboIndex = header.indexOf("티어조합");
+      const playerIndex = header.indexOf("선수명");
+      const teamIndex = header.indexOf("팀");
+      const raceIndex = header.indexOf("종족");
+
+      const data = rows
+        .slice(1)
+        .map((r) => ({
+          set: r[setIndex]?.trim() || "",
+          map: r[mapIndex]?.trim() || "",
+          tier: r[tierIndex]?.trim() || "",
+          tierCombo: r[comboIndex]?.trim() || "",
+          race: r[raceIndex]?.trim() || "",
+          player: r[playerIndex]?.trim() || "",
+          team: r[teamIndex]?.trim() || "",
+        }))
+        .filter((p) => p.player);
 
       setEntryPlayers(data);
     });
