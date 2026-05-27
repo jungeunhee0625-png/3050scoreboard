@@ -406,7 +406,19 @@ useEffect(() => {
   const leftPlayer = players.find((p) => p.player === leftName);
   const rightPlayer = players.find((p) => p.player === rightName);
   const map = maps.find((m) => m.name === mapName) || maps[0];
+const savePlayerOverlay = async () => {
+  const leftPlayer = players.find((p) => p.player === leftName);
+  const rightPlayer = players.find((p) => p.player === rightName);
+  const map = maps.find((m) => m.name === mapName) || maps[0];
 
+  await setDoc(doc(db, "playerOverlay", "current"), {
+    leftPlayer,
+    rightPlayer,
+    map,
+  });
+
+  alert("선수 소개 방송 적용 완료!");
+};
   const saveEntryOverlay = async () => {
 
   const setsWithRace = entryList.map((set) => {
