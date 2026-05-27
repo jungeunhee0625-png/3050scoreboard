@@ -116,6 +116,7 @@ type EntryPlayer = {
   player: string;
   race: string;
   tier: string;
+  tierCombo: string;
   map: string;
   team: string;
 };
@@ -382,6 +383,7 @@ useEffect(() => {
     tierCombo: r[comboIndex]?.trim() || "",
     race: r[raceIndex]?.trim() || "",
 tier: r[comboIndex]?.trim() || "",
+tierCombo: r[comboIndex]?.trim() || "",
 player: r[playerIndex]?.trim() || "",
   }))
   .filter((p) => p.player);
