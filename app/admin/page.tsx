@@ -378,13 +378,13 @@ useEffect(() => {
       const data = rows
   .slice(1)
   .map((r) => ({
-    set: r[setIndex]?.trim() || "",
-    map: r[mapIndex]?.trim() || "",
-    tierCombo: r[comboIndex]?.trim() || "",
-    race: r[raceIndex]?.trim() || "",
-tier: r[comboIndex]?.trim() || "",
+set: r[setIndex]?.trim() || "",
+map: r[mapIndex]?.trim() || "",
+tier: r[tierIndex]?.trim() || "",
 tierCombo: r[comboIndex]?.trim() || "",
+race: r[raceIndex]?.trim() || "",
 player: r[playerIndex]?.trim() || "",
+team: r[teamIndex]?.trim() || "",
   }))
   .filter((p) => p.player);
 
