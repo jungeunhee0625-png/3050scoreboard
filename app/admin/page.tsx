@@ -116,6 +116,7 @@ type EntryPlayer = {
   set: string;
   map: string;
   tierCombo: string;
+  race: string;
   team: string;
   player: string;
 };
@@ -281,25 +282,16 @@ const [entryAway, setEntryAway] = useState("스타강의반");
 
 const [entryRound, setEntryRound] = useState("1라운드 1주차");
 const [entryList, setEntryList] = useState([
-  { left: "", setName: "", map: "", right: "" },
-  { left: "", setName: "", map: "", right: "" },
-  { left: "", setName: "", map: "", right: "" },
-  { left: "", setName: "", map: "", right: "" },
-  { left: "", setName: "", map: "", right: "" },
-  { left: "", setName: "", map: "", right: "" },
-  { left: "", setName: "", map: "", right: "" },
+  { left: "", setName: "", map: "", right: "", winner:"" },
+  { left: "", setName: "", map: "", right: "", winner:"" },
+  { left: "", setName: "", map: "", right: "", winner:"" },
+  { left: "", setName: "", map: "", right: "", winner:"" },
+  { left: "", setName: "", map: "", right: "", winner:"" },
+  { left: "", setName: "", map: "", right: "", winner:"" },
+  { left: "", setName: "", map: "", right: "", winner:"" },
 ]);
 
-const saveEntryOverlay = async () => {
-  await setDoc(doc(db, "entryOverlay", "current"), {
-    home: teamProfiles[entryHome as keyof typeof teamProfiles],
-    away: teamProfiles[entryAway as keyof typeof teamProfiles],
-    round: entryRound,
-    sets: entryList,
-  });
 
-  alert("엔트리 방송 적용 완료!");
-};
 
 const saveTeamOverlay = async (
   side: "HOME" | "AWAY"
@@ -380,17 +372,18 @@ useEffect(() => {
       const comboIndex = header.indexOf("티어조합");
       const playerIndex = header.indexOf("선수명");
       const teamIndex = header.indexOf("팀");
-
+      const raceIndex = header.indexOf("종족");
       const data = rows
-        .slice(1)
-        .map((r) => ({
-          set: r[setIndex]?.trim() || "",
-          map: r[mapIndex]?.trim() || "",
-          tierCombo: r[comboIndex]?.trim() || "",
-          player: r[playerIndex]?.trim() || "",
-          team: r[teamIndex]?.trim() || "",
-        }))
-        .filter((p) => p.player);
+  .slice(1)
+  .map((r) => ({
+    set: r[setIndex]?.trim() || "",
+    map: r[mapIndex]?.trim() || "",
+    tierCombo: r[comboIndex]?.trim() || "",
+    race: r[raceIndex]?.trim() || "",
+    player: r[playerIndex]?.trim() || "",
+    team: r[teamIndex]?.trim() || "",
+  }))
+  .filter((p) => p.player);
 
       setEntryPlayers(data);
     });
@@ -414,15 +407,40 @@ useEffect(() => {
   const rightPlayer = players.find((p) => p.player === rightName);
   const map = maps.find((m) => m.name === mapName) || maps[0];
 
-  const savePlayerOverlay = async () => {
-    await setDoc(doc(db, "playerOverlay", "current"), {
-      leftPlayer,
-      rightPlayer,
-      map,
-    });
+  const saveEntryOverlay = async () => {
 
-    alert("선수·맵 소개 저장 완료!");
-  };
+  const setsWithRace = entryList.map((set) => {
+
+    const leftPlayer = entryPlayers.find(
+      (p) =>
+        p.team === entryHome &&
+        p.player === set.left
+    );
+
+    const rightPlayer = entryPlayers.find(
+      (p) =>
+        p.team === entryAway &&
+        p.player === set.right
+    );
+
+    return {
+      ...set,
+      leftRace: leftPlayer?.race || "",
+      rightRace: rightPlayer?.race || "",
+    };
+
+  });
+
+  await setDoc(doc(db, "entryOverlay", "current"), {
+    home: teamProfiles[entryHome as keyof typeof teamProfiles],
+    away: teamProfiles[entryAway as keyof typeof teamProfiles],
+    round: entryRound,
+    sets: setsWithRace,
+  });
+
+  alert("엔트리 방송 적용 완료!");
+
+};
 
   return (
     <main className="min-h-screen bg-[#020b2b] text-white p-5">
@@ -1008,7 +1026,40 @@ useEffect(() => {
     ))}
 </select>
 
-          </div>
+{/* 👇 여기 추가 */}
+<div className="col-span-4 grid grid-cols-2 gap-4">
+  <button
+    onClick={() => {
+      const updated = [...entryList];
+      updated[index].winner = "HOME";
+      setEntryList(updated);
+    }}
+    className={`rounded-xl p-4 text-[22px] font-black ${
+      set.winner === "HOME"
+        ? "bg-cyan-400 text-black"
+        : "bg-slate-700 text-white"
+    }`}
+  >
+    HOME 승리 체크
+  </button>
+
+  <button
+    onClick={() => {
+      const updated = [...entryList];
+      updated[index].winner = "AWAY";
+      setEntryList(updated);
+    }}
+    className={`rounded-xl p-4 text-[22px] font-black ${
+      set.winner === "AWAY"
+        ? "bg-pink-400 text-black"
+        : "bg-slate-700 text-white"
+    }`}
+  >
+    AWAY 승리 체크
+  </button>
+</div>
+
+</div>
 
         </div>
 

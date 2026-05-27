@@ -8,14 +8,11 @@ export default function EntryOverlayPage() {
   const [data, setData] = useState<any>(null);
 
   useEffect(() => {
-    const unsub = onSnapshot(
-      doc(db, "entryOverlay", "current"),
-      (snap) => {
-        if (snap.exists()) {
-          setData(snap.data());
-        }
+    const unsub = onSnapshot(doc(db, "entryOverlay", "current"), (snap) => {
+      if (snap.exists()) {
+        setData(snap.data());
       }
-    );
+    });
 
     return () => unsub();
   }, []);
@@ -33,22 +30,18 @@ export default function EntryOverlayPage() {
         transformOrigin: "top left",
       }}
     >
-      {/* 배경 */}
       <div
         style={{
           position: "absolute",
           inset: 0,
-          background:
-            "linear-gradient(90deg, #dbeafe 0%, #7dd3fc 50%, #22d3ee 100%)",
-          opacity: 0.95,
+          background: "transparent",
         }}
       />
 
-      {/* 제목 */}
       <div
         style={{
           position: "absolute",
-          top: 30,
+          top: 20,
           left: "50%",
           transform: "translateX(-50%)",
           textAlign: "center",
@@ -69,7 +62,7 @@ export default function EntryOverlayPage() {
         <div
           style={{
             marginTop: 10,
-            fontSize: 40,
+            fontSize: 48,
             fontWeight: 900,
             fontStyle: "italic",
             color: "#ffe21a",
@@ -79,11 +72,10 @@ export default function EntryOverlayPage() {
         </div>
       </div>
 
-      {/* 상단 바 */}
       <div
         style={{
           position: "absolute",
-          top: 140,
+          top: 240,
           left: 110,
           width: 1700,
           height: 100,
@@ -92,39 +84,26 @@ export default function EntryOverlayPage() {
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          paddingLeft: 160,
-          paddingRight: 160,
+          paddingLeft: 30,
+          paddingRight: 30,
         }}
       >
-        {/* HOME */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 25,
-          }}
-        >
+        <div style={{ display: "flex", alignItems: "center", gap: 25 }}>
           <img
-            src={`/team-profile/${data.home.logo}.png`}
+            src={`/team-logo/${data.home.logo}.png`}
             style={{
-              width: 120,
-              height: 120,
+              width: 200,
+              height: 200,
               objectFit: "contain",
+              marginTop: -70,
             }}
           />
 
-          <div
-            style={{
-              fontSize: 60,
-              fontWeight: 900,
-              color: "white",
-            }}
-          >
+          <div style={{ fontSize: 60, fontWeight: 900, color: "white" }}>
             {data.home.shortName}
           </div>
         </div>
 
-        {/* VS */}
         <div
           style={{
             fontSize: 70,
@@ -136,40 +115,27 @@ export default function EntryOverlayPage() {
           VS
         </div>
 
-        {/* AWAY */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 25,
-          }}
-        >
-          <div
-            style={{
-              fontSize: 60,
-              fontWeight: 900,
-              color: "white",
-            }}
-          >
+        <div style={{ display: "flex", alignItems: "center", gap: 25 }}>
+          <div style={{ fontSize: 60, fontWeight: 900, color: "white" }}>
             {data.away.shortName}
           </div>
 
           <img
-            src={`/team-profile/${data.away.logo}.png`}
+            src={`/team-logo/${data.away.logo}.png`}
             style={{
-              width: 120,
-              height: 120,
+              width: 200,
+              height: 200,
               objectFit: "contain",
+              marginTop: -70,
             }}
           />
         </div>
       </div>
 
-      {/* 엔트리 목록 */}
       <div
         style={{
           position: "absolute",
-          top: 280,
+          top: 350,
           left: 120,
           width: 1680,
         }}
@@ -178,6 +144,7 @@ export default function EntryOverlayPage() {
           <div
             key={index}
             style={{
+              position: "relative",
               height: 100,
               display: "grid",
               gridTemplateColumns: "1fr 320px 1fr",
@@ -185,7 +152,6 @@ export default function EntryOverlayPage() {
               borderBottom: "2px dotted rgba(8,48,103,0.5)",
             }}
           >
-            {/* 왼쪽 선수 */}
             <div
               style={{
                 textAlign: "center",
@@ -195,20 +161,24 @@ export default function EntryOverlayPage() {
                 color: "#083067",
               }}
             >
-              {set.left}
+              {set.left} {set.leftRace}
             </div>
 
-            {/* 세트 */}
-            <div
-              style={{
-                textAlign: "center",
-                lineHeight: 1.1,
-              }}
-            >
+            <div style={{ textAlign: "center", lineHeight: 1.3 }}>
               <div
                 style={{
-                  fontSize: 34,
-                  fontWeight: 900,
+                  fontSize: 24,
+                  fontWeight: 800,
+                  color: "#ffe21a",
+                }}
+              >
+                {index + 1}SET
+              </div>
+
+              <div
+                style={{
+                  fontSize: 24,
+                  fontWeight: 800,
                   color: "#ffe21a",
                 }}
               >
@@ -217,8 +187,8 @@ export default function EntryOverlayPage() {
 
               <div
                 style={{
-                  fontSize: 34,
-                  fontWeight: 900,
+                  fontSize: 24,
+                  fontWeight: 800,
                   color: "#ffe21a",
                 }}
               >
@@ -226,7 +196,6 @@ export default function EntryOverlayPage() {
               </div>
             </div>
 
-            {/* 오른쪽 선수 */}
             <div
               style={{
                 textAlign: "center",
@@ -236,8 +205,38 @@ export default function EntryOverlayPage() {
                 color: "#083067",
               }}
             >
-              {set.right}
+              {set.right} {set.rightRace}
             </div>
+
+            {set.winner === "HOME" && (
+              <img
+                src="/icons/win-check.png"
+                style={{
+                  position: "absolute",
+                  left: 10,
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  width: 90,
+                  height: 90,
+                  objectFit: "contain",
+                }}
+              />
+            )}
+
+            {set.winner === "AWAY" && (
+              <img
+                src="/icons/win-check.png"
+                style={{
+                  position: "absolute",
+                  right: 10,
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  width: 90,
+                  height: 90,
+                  objectFit: "contain",
+                }}
+              />
+            )}
           </div>
         ))}
       </div>
