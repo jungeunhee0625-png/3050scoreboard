@@ -281,6 +281,8 @@ const [entryHome, setEntryHome] = useState("제이디");
 const [entryAway, setEntryAway] = useState("스타강의반");
 
 const [entryRound, setEntryRound] = useState("1라운드 1주차");
+const [entryHomeScore, setEntryHomeScore] = useState(0);
+const [entryAwayScore, setEntryAwayScore] = useState(0);
 const [entryList, setEntryList] = useState([
   { left: "", setName: "", map: "", right: "", winner:"" },
   { left: "", setName: "", map: "", right: "", winner:"" },
@@ -435,20 +437,24 @@ const savePlayerOverlay = async () => {
         p.player === set.right
     );
 
-    return {
-      ...set,
-      leftRace: leftPlayer?.race || "",
-      rightRace: rightPlayer?.race || "",
-    };
+   return {
+  ...set,
+  leftTier: leftPlayer?.tier || "",
+  leftRace: leftPlayer?.race || "",
+  rightTier: rightPlayer?.tier || "",
+  rightRace: rightPlayer?.race || "",
+};
 
   });
 
   await setDoc(doc(db, "entryOverlay", "current"), {
-    home: teamProfiles[entryHome as keyof typeof teamProfiles],
-    away: teamProfiles[entryAway as keyof typeof teamProfiles],
-    round: entryRound,
-    sets: setsWithRace,
-  });
+  home: teamProfiles[entryHome as keyof typeof teamProfiles],
+  away: teamProfiles[entryAway as keyof typeof teamProfiles],
+  round: entryRound,
+  homeScore: entryHomeScore,
+  awayScore: entryAwayScore,
+  sets: setsWithRace,
+});
 
   alert("엔트리 방송 적용 완료!");
 
@@ -773,6 +779,7 @@ const savePlayerOverlay = async () => {
                 <button
                   onClick={savePlayerOverlay}
                   className="w-full rounded-xl bg-blue-600 p-3 text-[20px] font-black hover:bg-blue-500"
+                
                 >
                   저장 및 적용
                 </button>
@@ -931,7 +938,59 @@ const savePlayerOverlay = async () => {
       />
 
     </div>
+<div className="mt-8 mb-5 flex items-center justify-center gap-10">
 
+  {/* HOME */}
+  <div className="flex items-center gap-3">
+
+    <button
+      onClick={() =>
+        setEntryHomeScore((prev) => Math.max(0, prev - 1))
+      }
+      className="h-12 w-12 rounded-xl bg-slate-400 text-[28px] font-black"
+    >
+      -
+    </button>
+
+    <div className="w-16 text-center text-[34px] font-black text-white">
+      {entryHomeScore}
+    </div>
+
+    <button
+      onClick={() => setEntryHomeScore((prev) => prev + 1)}
+      className="h-12 w-12 rounded-xl bg-blue-500 text-[28px] font-black text-white"
+    >
+      +
+    </button>
+
+  </div>
+
+  {/* AWAY */}
+  <div className="flex items-center gap-3">
+
+    <button
+      onClick={() =>
+        setEntryAwayScore((prev) => Math.max(0, prev - 1))
+      }
+      className="h-14 w-14 rounded-xl bg-slate-400 text-[28px] font-black"
+    >
+      -
+    </button>
+
+    <div className="w-16 text-center text-[34px] font-black text-white">
+      {entryAwayScore}
+    </div>
+
+    <button
+      onClick={() => setEntryAwayScore((prev) => prev + 1)}
+      className="h-14 w-14 rounded-xl bg-red-500 text-[28px] font-black text-white"
+    >
+      +
+    </button>
+
+  </div>
+
+</div>
     {/* 세트 */}
     <div className="mt-8 flex flex-col gap-4">
 

@@ -104,16 +104,50 @@ export default function EntryOverlayPage() {
           </div>
         </div>
 
-        <div
-          style={{
-            fontSize: 70,
-            fontWeight: 900,
-            color: "#ffe21a",
-            fontStyle: "italic",
-          }}
-        >
-          VS
-        </div>
+<div
+  style={{
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 40,
+    transform: "translateX(100px)",
+    marginTop: 20,
+    marginBottom: 20,
+  }}
+>
+  <div
+    style={{
+      fontSize: 70,
+      fontWeight: 900,
+      color: "#ffe21a",
+      fontStyle: "italic",
+    }}
+  >
+    {data.homeScore ?? 0}
+  </div>
+
+  <div
+    style={{
+      fontSize: 70,
+      fontWeight: 900,
+      color: "#ffe21a",
+      fontStyle: "italic",
+    }}
+  >
+    VS
+  </div>
+
+  <div
+    style={{
+      fontSize: 70,
+      fontWeight: 900,
+      color: "#ffe21a",
+      fontStyle: "italic",
+    }}
+  >
+    {data.awayScore ?? 0}
+  </div>
+</div>
 
         <div style={{ display: "flex", alignItems: "center", gap: 25 }}>
           <div style={{ fontSize: 60, fontWeight: 900, color: "white" }}>
@@ -161,7 +195,7 @@ export default function EntryOverlayPage() {
                 color: "#083067",
               }}
             >
-              {set.left} {set.leftRace}
+              {set.leftTier} {set.left} {set.leftRace}
             </div>
 
             <div style={{ textAlign: "center", lineHeight: 1.3 }}>
@@ -205,7 +239,7 @@ export default function EntryOverlayPage() {
                 color: "#083067",
               }}
             >
-              {set.right} {set.rightRace}
+              {set.rightTier} {set.right} {set.rightRace}
             </div>
 
             {set.winner === "HOME" && (
