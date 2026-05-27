@@ -20,16 +20,17 @@ export default function EntryOverlayPage() {
   if (!data) return null;
 
   return (
-    <main
-      style={{
-        width: "1920px",
-        height: "1080px",
-        position: "relative",
-        overflow: "hidden",
-        background: "transparent",
-        transformOrigin: "top left",
-      }}
-    >
+   <main
+  style={{
+    width: "1920px",
+    height: "1080px",
+    position: "relative",
+    overflow: "hidden",
+    background: "transparent",
+    transformOrigin: "top left",
+    transform: "scale(min(100vw / 1920, 100vh / 1080))",
+  }}
+>
       <div
         style={{
           position: "absolute",
