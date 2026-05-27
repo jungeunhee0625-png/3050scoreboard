@@ -113,12 +113,11 @@ type Player = {
   awards: string;
 };
 type EntryPlayer = {
-  set: string;
-  map: string;
-  tierCombo: string;
-  race: string;
-  team: string;
   player: string;
+  race: string;
+  tier: string;
+  map: string;
+  team: string;
 };
 const maps = [
   {
@@ -382,8 +381,8 @@ useEffect(() => {
     map: r[mapIndex]?.trim() || "",
     tierCombo: r[comboIndex]?.trim() || "",
     race: r[raceIndex]?.trim() || "",
-    player: r[playerIndex]?.trim() || "",
-    team: r[teamIndex]?.trim() || "",
+tier: r[comboIndex]?.trim() || "",
+player: r[playerIndex]?.trim() || "",
   }))
   .filter((p) => p.player);
 
