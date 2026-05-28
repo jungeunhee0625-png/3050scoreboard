@@ -111,7 +111,6 @@ type Player = {
   rank: string;
   totalRank: string;
   awards: string;
-  totalRank: string;
 };
 type EntryPlayer = {
   player: string;
