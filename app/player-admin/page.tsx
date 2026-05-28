@@ -178,18 +178,18 @@ const [rightSearch, setRightSearch] = useState("");
             });
 
             return {
-              player: obj["플레이어"] || "",
-              rank: obj["랭킹"] || "",
-              race: obj["종족"] || "",
-              tier: obj["티어"] || "",
-              zerg: obj["저그전"] || "",
-              protoss: obj["프로토스전"] || "",
-              terran: obj["테란전"] || "",
-              total: obj["총전적"] || "",
-              winrate: obj["승률"] || "",
-              elo: obj["ELO"] || "",
-              awards: obj["수상경력"] || "",
-            };
+  player: obj["플레이어"] || obj["선수명"] || "",
+  rank: obj["티어랭킹"] || "",
+  totalRank: obj["전체랭킹"] || "",
+  race: obj["종족"] || "",
+  tier: obj["티어"] || "",
+  zerg: obj["저그전"] || "",
+  protoss: obj["프로토스전"] || "",
+  terran: obj["테란전"] || "",
+  total: obj["총전적"] || "",
+  elo: obj["ELO"] || "",
+  awards: obj["수상경력"] || "",
+};
           })
           .filter((p) => p.player);
 
