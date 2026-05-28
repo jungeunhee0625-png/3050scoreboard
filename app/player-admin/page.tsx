@@ -416,10 +416,12 @@ function PlayerCard({ player }: { player?: Player }) {
       <div className="border-t border-white/40 p-2 text-[12px] font-black">
 
         <p className="text-yellow-300">
-          ELO랭킹 {player.tier} {player.rank}위
-        </p>
+  전체랭킹 {player.totalRank || "-"}위
+</p>
 
-        <p>승률 {player.winrate}</p>
+<p className="text-yellow-300">
+  티어별랭킹 {player.tier} {player.rank || "-"}위
+</p>
 
       </div>
 
@@ -429,7 +431,7 @@ function PlayerCard({ player }: { player?: Player }) {
 
 function MapCard({ map }: { map: any }) {
   return (
-    <div className="h-[360px] bg-transparent border-[4px] border-yellow-400 text-white p-4">
+    <div className="h-[390px] bg-transparent border-[4px] border-yellow-400 text-white p-4">
 
       <div className="text-center">
 

@@ -112,7 +112,7 @@ function TeamProfileCard({
               <p>감독 : {team.coach}</p>
               <p>부감독 : {team.subCoach}</p>
               <p>보호선수 : {team.protectedPlayer}</p>
-              <p>시즌전적 : {team.seasonRecord}</p>
+              <p>주목할 선수 : {team.starPlayer}</p>
               <p>출사표 : {team.message}</p>
             </div>
           </div>

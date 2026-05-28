@@ -134,15 +134,14 @@ export default function EntryOverlayPage() {
             </div>
           </div>
 
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: 40,
-              transform: "translateX(100px)",
-            }}
-          >
+         <div
+  style={{
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 40,
+  }}
+>
             <div style={{ fontSize: 70, fontWeight: 900, color: "#ffe21a", fontStyle: "italic" }}>
               {data.homeScore ?? 0}
             </div>

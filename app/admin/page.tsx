@@ -94,7 +94,7 @@ const scoreDefault = {
 };
 
 const SHEET_CSV =
-  "https://docs.google.com/spreadsheets/d/1F6Ey-whXAsTSMCWVmfexGd77jj6WDgv6Z7hkK3BHahs/export?format=csv&gid=1009621464";
+  "https://docs.google.com/spreadsheets/d/14FUpa0Hcgtx6J1ZByx-cXGfbF7_ze1edONz8Wt70Obw/export?format=csv&gid=1624515144";
 
 const ENTRY_SHEET_CSV =
   "https://docs.google.com/spreadsheets/d/1nKJmEy6h3AL0p-kCyPfLPV1x4rUFCEhxGMQfzlAXypo/export?format=csv&gid=0";
@@ -110,6 +110,7 @@ type Player = {
   winrate: string;
   elo: string;
   rank: string;
+  totalRank: string;
   awards: string;
 };
 type EntryPlayer = {
@@ -262,7 +263,11 @@ const [homePredict, setHomePredict] = useState("0:0 승");
 const [awayPredict, setAwayPredict] = useState("0:0 승");
 const [matchHome, setMatchHome] = useState("스타강의반");
 const [matchAway, setMatchAway] = useState("제이디");
+const [homeStarPlayer, setHomeStarPlayer] = useState("");
+const [homeMessage, setHomeMessage] = useState("");
 
+const [awayStarPlayer, setAwayStarPlayer] = useState("");
+const [awayMessage, setAwayMessage] = useState("");
 const [matchRound, setMatchRound] = useState("1라운드 1주차 1경기");
 const [matchDate, setMatchDate] = useState("05.12 TUE 21:30");
 const [matchBJ, setMatchBJ] = useState("BJ-Chiwoo");
@@ -298,21 +303,35 @@ const [entryList, setEntryList] = useState([
 const saveTeamOverlay = async (
   side: "HOME" | "AWAY"
 ) => {
- const selectedTeam =
-  side === "HOME"
-    ? teamProfiles[homeTeam as keyof typeof teamProfiles]
-    : teamProfiles[awayTeam as keyof typeof teamProfiles];
+  const selectedTeam =
+    side === "HOME"
+      ? teamProfiles[homeTeam as keyof typeof teamProfiles]
+      : teamProfiles[awayTeam as keyof typeof teamProfiles];
 
   const predict =
     side === "HOME"
       ? homePredict
       : awayPredict;
 
+  const starPlayer =
+    side === "HOME"
+      ? homeStarPlayer
+      : awayStarPlayer;
+
+  const message =
+    side === "HOME"
+      ? homeMessage
+      : awayMessage;
+
   await setDoc(
     doc(db, "teamProfile", "current"),
     {
       side,
-      team: selectedTeam,
+      team: {
+        ...selectedTeam,
+        starPlayer,
+        message,
+      },
       predict,
     }
   );
@@ -333,19 +352,19 @@ useEffect(() => {
             obj[h.trim()] = r[i]?.trim() || "";
           });
 
-          return {
-            player: obj["플레이어"] || "",
-            rank: obj["랭킹"] || "",
-            race: obj["종족"] || "",
-            tier: obj["티어"] || "",
-            zerg: obj["저그전"] || "",
-            protoss: obj["프로토스전"] || "",
-            terran: obj["테란전"] || "",
-            total: obj["총전적"] || "",
-            winrate: obj["승률"] || "",
-            elo: obj["ELO"] || "",
-            awards: obj["수상경력"] || "",
-          };
+        return {
+  player: obj["플레이어"] || obj["선수명"] || "",
+  rank: obj["티어랭킹"] || "",
+  totalRank: obj["전체랭킹"] || "",
+  race: obj["종족"] || "",
+  tier: obj["티어"] || "",
+  zerg: obj["저그전"] || "",
+  protoss: obj["프로토스전"] || "",
+  terran: obj["테란전"] || "",
+  total: obj["총전적"] || "",
+  elo: obj["ELO"] || "",
+  awards: obj["수상경력"] || "",
+};
         });
 
       setPlayers(data);
@@ -823,6 +842,19 @@ const savePlayerOverlay = async () => {
           value={homePredict}
           onChange={(e) => setHomePredict(e.target.value)}
         />
+        <input
+  className="mt-4 w-full rounded border border-slate-600 bg-slate-700 p-3 text-[18px]"
+  placeholder="주목할 선수"
+  value={homeStarPlayer}
+  onChange={(e) => setHomeStarPlayer(e.target.value)}
+/>
+
+<textarea
+  className="mt-4 w-full rounded border border-slate-600 bg-slate-700 p-3 text-[18px]"
+  placeholder="출사표"
+  value={homeMessage}
+  onChange={(e) => setHomeMessage(e.target.value)}
+/>
         <button
   onClick={() => saveTeamOverlay("HOME")}
   className="mt-4 w-full rounded-xl bg-cyan-500 p-3 text-[20px] font-black hover:bg-cyan-400"
@@ -850,6 +882,19 @@ const savePlayerOverlay = async () => {
           value={awayPredict}
           onChange={(e) => setAwayPredict(e.target.value)}
         />
+       <input
+  className="mt-4 w-full rounded border border-slate-600 bg-slate-700 p-3 text-[18px]"
+  placeholder="주목할 선수"
+  value={awayStarPlayer}
+onChange={(e) => setAwayStarPlayer(e.target.value)}
+/>
+
+<textarea
+  className="mt-4 w-full rounded border border-slate-600 bg-slate-700 p-3 text-[18px]"
+  placeholder="출사표"
+  value={awayMessage}
+onChange={(e) => setAwayMessage(e.target.value)}
+/>
         <button
   onClick={() => saveTeamOverlay("AWAY")}
   className="mt-4 w-full rounded-xl bg-pink-500 p-3 text-[20px] font-black hover:bg-pink-400"
@@ -861,14 +906,22 @@ const savePlayerOverlay = async () => {
 
     <div className="flex flex-col items-center gap-16 bg-transparent">
 <TeamProfileCard
+  team={{
+    ...teamProfiles[homeTeam as keyof typeof teamProfiles],
+    starPlayer: homeStarPlayer,
+    message: homeMessage,
+  }}
   side="HOME"
-  team={teamProfiles[homeTeam as keyof typeof teamProfiles]}
   predict={homePredict}
 />
 
 <TeamProfileCard
+  team={{
+    ...teamProfiles[awayTeam as keyof typeof teamProfiles],
+    starPlayer: awayStarPlayer,
+    message: awayMessage,
+  }}
   side="AWAY"
-  team={teamProfiles[awayTeam as keyof typeof teamProfiles]}
   predict={awayPredict}
 />
     </div>
@@ -1326,8 +1379,8 @@ function TeamProfileCard({
               <p>감독 : {team.coach}</p>
               <p>부감독 : {team.subCoach}</p>
               <p>보호선수 : {team.protectedPlayer}</p>
-              <p>시즌전적 : {team.seasonRecord}</p>
-              <p>출사표 : {team.message}</p>
+<p>주목할 선수 : {team.starPlayer}</p>
+<p>출사표 : {team.message}</p>
             </div>
           </div>
 
@@ -1343,8 +1396,8 @@ function PlayerCard({ player }: { player?: Player }) {
   if (!player) return <div>선수 없음</div>;
 
   return (
-    <div className="h-[360px] bg-gradient-to-b from-cyan-400 to-blue-600 border-[4px] border-yellow-400 text-white flex flex-col">
-      <div className="border-b border-yellow-300 p-4">
+    <div className="h-[390px] bg-gradient-to-b from-cyan-400 to-blue-600 border-[4px] border-yellow-400 text-white flex flex-col">
+      <div className="border-b border-yellow-300 p-3">
         <div className="text-center text-[30px] font-black leading-none">
           {player.tier}
         </div>
@@ -1354,7 +1407,7 @@ function PlayerCard({ player }: { player?: Player }) {
         </div>
       </div>
 
-      <div className="flex-1 p-5">
+      <div className="p-5">
         <div className="text-center text-[18px] font-black leading-snug text-yellow-300 underline">
           3050RECORD
         </div>
@@ -1367,19 +1420,23 @@ function PlayerCard({ player }: { player?: Player }) {
         </div>
       </div>
 
-      <div className="border-t border-white/40 p-2 text-[12px] font-black">
-        <p className="text-yellow-300">
-          ELO랭킹 {player.tier} {player.rank}위
-        </p>
-        <p>승률 {player.winrate}</p>
-      </div>
+      <div className="border-t border-white/40 p-3 text-[14px] font-black leading-snug">
+  <p className="text-yellow-300">
+    전체랭킹 {player.totalRank || "-"}위
+  </p>
+
+  <p className="text-yellow-300">
+    티어별랭킹 {player.tier} {player.rank || "-"}위
+  </p>
+</div>
+
     </div>
   );
 }
 
 function MapCard({ map }: { map: any }) {
   return (
-    <div className="h-[360px] bg-gradient-to-b from-sky-400 to-blue-600 border-[4px] border-yellow-400 text-white p-4">
+    <div className="h-[390px] bg-gradient-to-b from-sky-400 to-blue-600 border-[4px] border-yellow-400 text-white p-4">
       <div className="text-center">
         <div className="text-[44px] font-black leading-none">{map.name}</div>
         <div className="mt-1 text-[24px] font-black leading-none text-yellow-300">

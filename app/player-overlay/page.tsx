@@ -99,7 +99,7 @@ style={{
 
 function PlayerCard({ player }: { player: Player }) {
   return (
-    <div className="h-[360px] bg-gradient-to-b from-sky-400 to-blue-600 border-[4px] border-yellow-400 text-white flex flex-col">
+    <div className="h-[390px] bg-gradient-to-b from-sky-400 to-blue-600 border-[4px] border-yellow-400 text-white flex flex-col">
 
       <div className="p-4 border-b border-yellow-300">
 
@@ -133,10 +133,12 @@ function PlayerCard({ player }: { player: Player }) {
       <div className="border-t border-white/40 p-2 text-[12px] font-black">
 
         <p className="text-yellow-300">
-          ELO랭킹 {player.tier} {player.rank}위
-        </p>
+  전체랭킹 {player.totalRank || "-"}위
+</p>
 
-        <p>승률 {player.winrate}</p>
+<p className="text-yellow-300">
+  티어별랭킹 {player.tier} {player.rank || "-"}위
+</p>
 
       </div>
 
@@ -146,7 +148,7 @@ function PlayerCard({ player }: { player: Player }) {
 
 function MapCard({ map }: { map: any }) {
   return (
-    <div className="h-[360px] bg-gradient-to-b from-sky-400 to-blue-600 border-[4px] border-yellow-400 text-white p-4">
+    <div className="h-[390px] bg-gradient-to-b from-sky-400 to-blue-600 border-[4px] border-yellow-400 text-white p-4">
 
       <div className="text-center">
 
