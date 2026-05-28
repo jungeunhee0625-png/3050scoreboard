@@ -12,7 +12,7 @@ type Player = {
   protoss: string;
   terran: string;
   total: string;
-  winrate: string;
+ totalRank: string;
   elo: string;
   rank: string;
   awards: string;
