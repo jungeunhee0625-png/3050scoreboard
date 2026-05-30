@@ -296,7 +296,48 @@ const [entryList, setEntryList] = useState([
   { left: "", setName: "", map: "", right: "", winner:"" },
   { left: "", setName: "", map: "", right: "", winner:"" },
 ]);
+useEffect(() => {
+  const unsub = onSnapshot(
+    doc(db, "entryOverlay", "current"),
+    (snap) => {
+      if (!snap.exists()) return;
 
+      const data = snap.data();
+
+      if (data.round) setEntryRound(data.round);
+      if (typeof data.homeScore === "number") setEntryHomeScore(data.homeScore);
+      if (typeof data.awayScore === "number") setEntryAwayScore(data.awayScore);
+
+      if (data.home?.shortName) {
+        const homeTeamName = teams.find(
+          (team) => teamProfiles[team as keyof typeof teamProfiles].shortName === data.home.shortName
+        );
+        if (homeTeamName) setEntryHome(homeTeamName);
+      }
+
+      if (data.away?.shortName) {
+        const awayTeamName = teams.find(
+          (team) => teamProfiles[team as keyof typeof teamProfiles].shortName === data.away.shortName
+        );
+        if (awayTeamName) setEntryAway(awayTeamName);
+      }
+
+      if (Array.isArray(data.sets)) {
+        setEntryList(
+          data.sets.map((set: any) => ({
+            left: set.left || "",
+            setName: set.setName || "",
+            map: set.map || "",
+            right: set.right || "",
+            winner: set.winner || "",
+          }))
+        );
+      }
+    }
+  );
+
+  return () => unsub();
+}, []);
 
 
 const saveTeamOverlay = async (
