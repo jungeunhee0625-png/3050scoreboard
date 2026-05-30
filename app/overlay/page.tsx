@@ -124,9 +124,12 @@ export default function OverlayPage() {
         </div>
 
         {/* 왼쪽 선수 */}
-        <div className="absolute top-[101px] left-[20px] w-[120px] text-center text-[26px] font-black tracking-[-1px] text-black">
-          {data.leftPlayer}
-        </div>
+        <div
+  className="absolute top-[101px] left-[20px] w-[120px] text-center font-black tracking-[-1px] text-black"
+  style={{ fontSize: data.playerFontSize || 26 }}
+>
+  {data.leftPlayer}
+</div>
 
         {/* 왼쪽 점수 */}
         <div className="absolute top-[95px] left-[212px] w-[30px] text-center text-[38px] font-black text-white">
@@ -139,9 +142,12 @@ export default function OverlayPage() {
         </div>
 
         {/* 오른쪽 선수 */}
-        <div className="absolute top-[101px] right-[40px] w-[150px] text-center text-[26px] font-black tracking-[-1px] text-black">
-          {data.rightPlayer}
-        </div>
+      <div
+  className="absolute top-[101px] right-[40px] w-[150px] text-center font-black tracking-[-1px] text-black"
+  style={{ fontSize: data.playerFontSize || 26 }}
+>
+  {data.rightPlayer}
+</div>
 
         {/* 왼쪽 하단 */}
         <div className="absolute bottom-[1px] left-[28px] text-[38px] font-black text-red-600">

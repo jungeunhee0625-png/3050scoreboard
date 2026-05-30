@@ -76,17 +76,19 @@ export default function EntryOverlayPage() {
             textAlign: "center",
           }}
         >
-          <div
-            style={{
-              fontSize: 80,
-              fontWeight: 900,
-              fontStyle: "italic",
-              color: "#083067",
-              lineHeight: 1,
-            }}
-          >
-            TODAY&apos;S ENTRY
-          </div>
+         <div
+  style={{
+    fontSize: 80,
+    fontWeight: 900,
+    fontStyle: "italic",
+    color: "#083067",
+    lineHeight: 1,
+  }}
+>
+  {data.mode === "RESULT"
+    ? "TODAY'S RESULT"
+    : "TODAY'S ENTRY"}
+</div>
 
           <div
             style={{

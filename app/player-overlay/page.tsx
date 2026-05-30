@@ -185,9 +185,9 @@ function MapCard({ map }: { map: any }) {
 
           <p>▶ 종족별 승률 : 3050프로리그 기준</p>
 
-          <p className="text-yellow-300">
-            {map.matchup || "-"}
-          </p>
+       <p className="text-yellow-300">
+  {map.record?.zvp || "-"} / {map.record?.zvt || "-"} / {map.record?.pvt || "-"}
+</p>
 
         </div>
 

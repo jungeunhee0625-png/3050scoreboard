@@ -91,6 +91,7 @@ const scoreDefault = {
   rightCode: "P7",
   leftTeam: "스타강의반",
   rightTeam: "제이디",
+  playerFontSize: 24,
 };
 
 const SHEET_CSV =
@@ -98,6 +99,9 @@ const SHEET_CSV =
 
 const ENTRY_SHEET_CSV =
   "https://docs.google.com/spreadsheets/d/1nKJmEy6h3AL0p-kCyPfLPV1x4rUFCEhxGMQfzlAXypo/export?format=csv&gid=0";
+
+  const MAP_RECORD_CSV =
+  "https://docs.google.com/spreadsheets/d/14FUpa0Hcgtx6J1ZByx-cXGfbF7_ze1edONz8Wt70Obw/export?format=csv&gid=604142360";
 
 type Player = {
   player: string;
@@ -119,6 +123,11 @@ type EntryPlayer = {
   tierCombo: string;
   map: string;
   team: string;
+};
+type MapRecord = {
+  zvp: string;
+  zvt: string;
+  pvt: string;
 };
 const maps = [
   {
@@ -269,9 +278,44 @@ const [entryPlayers, setEntryPlayers] = useState<EntryPlayer[]>([]);
   const [rightSearch, setRightSearch] = useState("");
 const [homeTeam, setHomeTeam] = useState("제이디");
 const [awayTeam, setAwayTeam] = useState("스타강의반");
-
+const [mapRecords, setMapRecords] = useState<Record<string, MapRecord>>({});
 const [homePredict, setHomePredict] = useState("0:0 승");
 const [awayPredict, setAwayPredict] = useState("0:0 승");
+useEffect(() => {
+  fetch(MAP_RECORD_CSV)
+    .then((res) => res.text())
+    .then((text) => {
+      const rows = parseCSV(text);
+
+      const headerIndex = rows.findIndex((row) =>
+        row.some((cell) => cell.trim() === "맵이름")
+      );
+
+      if (headerIndex === -1) return;
+
+      const header = rows[headerIndex].map((h) => h.trim());
+
+      const mapIndex = header.indexOf("맵이름");
+      const zvpIndex = header.indexOf("Z vs P");
+      const zvtIndex = header.indexOf("Z vs T");
+      const pvtIndex = header.indexOf("P vs T");
+
+      const records: Record<string, MapRecord> = {};
+
+      rows.slice(headerIndex + 1).forEach((r) => {
+        const mapName = r[mapIndex]?.trim();
+        if (!mapName) return;
+
+        records[mapName] = {
+          zvp: r[zvpIndex]?.trim() || "-",
+          zvt: r[zvtIndex]?.trim() || "-",
+          pvt: r[pvtIndex]?.trim() || "-",
+        };
+      });
+
+      setMapRecords(records);
+    });
+}, []);
 useEffect(() => {
   const unsub = onSnapshot(
     doc(db, "teamProfile", "current"),
@@ -313,6 +357,42 @@ const saveMatchupOverlay = async () => {
 
   alert("매치업 방송 적용 완료!");
 };
+useEffect(() => {
+  const unsub = onSnapshot(
+    doc(db, "matchupOverlay", "current"),
+    (snap) => {
+      if (!snap.exists()) return;
+
+      const data = snap.data();
+
+      if (data.matchRound) setMatchRound(data.matchRound);
+      if (data.matchDate) setMatchDate(data.matchDate);
+      if (data.matchBJ) setMatchBJ(data.matchBJ);
+
+      if (data.home?.shortName) {
+        const homeTeamName = teams.find(
+          (team) =>
+            teamProfiles[team as keyof typeof teamProfiles].shortName ===
+            data.home.shortName
+        );
+
+        if (homeTeamName) setMatchHome(homeTeamName);
+      }
+
+      if (data.away?.shortName) {
+        const awayTeamName = teams.find(
+          (team) =>
+            teamProfiles[team as keyof typeof teamProfiles].shortName ===
+            data.away.shortName
+        );
+
+        if (awayTeamName) setMatchAway(awayTeamName);
+      }
+    }
+  );
+
+  return () => unsub();
+}, []);
 const [entryHome, setEntryHome] = useState("제이디");
 const [entryAway, setEntryAway] = useState("스타강의반");
 
@@ -507,11 +587,14 @@ const savePlayerOverlay = async () => {
   const rightPlayer = players.find((p) => p.player === rightName);
   const map = maps.find((m) => m.name === mapName) || maps[0];
 
-  await setDoc(doc(db, "playerOverlay", "current"), {
-    leftPlayer,
-    rightPlayer,
-    map,
-  });
+await setDoc(doc(db, "playerOverlay", "current"), {
+  leftPlayer,
+  rightPlayer,
+  map: {
+    ...map,
+    record: mapRecords[map.name.trim()],
+  },
+});
 
   alert("선수 소개 방송 적용 완료!");
 };
@@ -541,19 +624,50 @@ const savePlayerOverlay = async () => {
 
   });
 
-  await setDoc(doc(db, "entryOverlay", "current"), {
+await setDoc(doc(db, "entryOverlay", "current"), {
   home: teamProfiles[entryHome as keyof typeof teamProfiles],
   away: teamProfiles[entryAway as keyof typeof teamProfiles],
   round: entryRound,
   homeScore: entryHomeScore,
   awayScore: entryAwayScore,
   sets: setsWithRace,
+  mode: "ENTRY",
 });
 
   alert("엔트리 방송 적용 완료!");
 
 };
+const saveResultOverlay = async () => {
+  const setsWithRace = entryList.map((set) => {
+    const leftPlayer = entryPlayers.find(
+      (p) => p.team === entryHome && p.player === set.left
+    );
 
+    const rightPlayer = entryPlayers.find(
+      (p) => p.team === entryAway && p.player === set.right
+    );
+
+    return {
+      ...set,
+      leftTier: leftPlayer?.tier || "",
+      leftRace: leftPlayer?.race || "",
+      rightTier: rightPlayer?.tier || "",
+      rightRace: rightPlayer?.race || "",
+    };
+  });
+
+  await setDoc(doc(db, "entryOverlay", "current"), {
+    home: teamProfiles[entryHome as keyof typeof teamProfiles],
+    away: teamProfiles[entryAway as keyof typeof teamProfiles],
+    round: entryRound,
+    homeScore: entryHomeScore,
+    awayScore: entryAwayScore,
+    sets: setsWithRace,
+    mode: "RESULT",
+  });
+
+  alert("경기결과 적용 완료!");
+};
   return (
     <main className="min-h-screen bg-[#020b2b] text-white p-5">
       <div className="mx-auto max-w-[1500px]">
@@ -723,7 +837,44 @@ const savePlayerOverlay = async () => {
                   onChange={(e) => updateScore("rightPlayer", e.target.value)}
                 />
               </div>
+<div className="mt-2">
+  <label>선수명 글씨 크기</label>
 
+  <div className="flex gap-2">
+    <button
+      className="px-3 bg-slate-500 text-white rounded"
+      onClick={() =>
+        updateScore(
+          "playerFontSize",
+          Math.max(10, (scoreData.playerFontSize || 24) - 1)
+        )
+      }
+    >
+      -
+    </button>
+
+    <input
+      type="number"
+      className="flex-1 rounded border border-gray-300 bg-white p-2 text-black"
+      value={scoreData.playerFontSize || 24}
+      onChange={(e) =>
+        updateScore("playerFontSize", Number(e.target.value))
+      }
+    />
+
+    <button
+      className="px-3 bg-blue-500 text-white rounded"
+      onClick={() =>
+        updateScore(
+          "playerFontSize",
+          (scoreData.playerFontSize || 24) + 1
+        )
+      }
+    >
+      +
+    </button>
+  </div>
+</div>
               <div className="grid grid-cols-2 gap-3">
                 <input
                   className="border p-2"
@@ -885,7 +1036,10 @@ const savePlayerOverlay = async () => {
 
               <div className="grid grid-cols-[300px_590px_300px] gap-3">
                 <PlayerCard player={leftPlayer} />
-                <MapCard map={map} />
+                <MapCard
+  map={map}
+  record={mapRecords[map.name.trim()]}
+/>
                 <PlayerCard player={rightPlayer} />
               </div>
             </div>
@@ -1275,7 +1429,12 @@ onChange={(e) => setAwayMessage(e.target.value)}
     >
       엔트리 방송 적용
     </button>
-
+<button
+  onClick={saveResultOverlay}
+  className="mt-4 w-full rounded-2xl bg-pink-500 p-6 text-[32px] font-black text-black"
+>
+  경기결과 적용
+</button>
   </section>
 )}
 
@@ -1508,7 +1667,7 @@ function PlayerCard({ player }: { player?: Player }) {
   );
 }
 
-function MapCard({ map }: { map: any }) {
+function MapCard({ map, record }: { map: any; record?: MapRecord }) {
   return (
     <div className="h-[390px] bg-gradient-to-b from-sky-400 to-blue-600 border-[4px] border-yellow-400 text-white p-4">
       <div className="text-center">
@@ -1532,7 +1691,9 @@ function MapCard({ map }: { map: any }) {
           <p className="text-[14px] leading-snug">({map.rush})</p>
           <p>▶ 타입 : {map.type}</p>
           <p>▶ 종족별 승률 : 3050프로리그 기준</p>
-          <p className="text-yellow-300">{map.matchup || "-"}</p>
+          <p className="text-yellow-300">
+  {record?.zvp || map.record?.zvp || "-"} / {record?.zvt || map.record?.zvt || "-"} / {record?.pvt || map.record?.pvt || "-"}
+</p>
         </div>
       </div>
     </div>
