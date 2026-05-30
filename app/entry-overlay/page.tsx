@@ -139,6 +139,9 @@ export default function EntryOverlayPage() {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
+    position: "absolute",
+left: "50%",
+transform: "translateX(-50%)",
     gap: 40,
   }}
 >
