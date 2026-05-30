@@ -26,6 +26,8 @@ const defaultData = {
 
   leftTeam: "스타강의반",
   rightTeam: "제이디",
+
+  playerFontSize: 24,
 };
 
 export default function OverlayPage() {
