@@ -124,7 +124,7 @@ export default function OverlayPage() {
         </div>
 
         {/* 왼쪽 선수 */}
-        <div className="absolute top-[105px] left-[20px] w-[120px] text-center text-[21px] font-black tracking-[-1px] text-black">
+        <div className="absolute top-[101px] left-[20px] w-[120px] text-center text-[26px] font-black tracking-[-1px] text-black">
           {data.leftPlayer}
         </div>
 
@@ -139,7 +139,7 @@ export default function OverlayPage() {
         </div>
 
         {/* 오른쪽 선수 */}
-        <div className="absolute top-[105px] right-[40px] w-[150px] text-center text-[21px] font-black tracking-[-1px] text-black">
+        <div className="absolute top-[101px] right-[40px] w-[150px] text-center text-[26px] font-black tracking-[-1px] text-black">
           {data.rightPlayer}
         </div>
 

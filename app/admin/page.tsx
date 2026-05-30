@@ -248,6 +248,18 @@ export default function AdminPage() {
 >("score");
 
   const [scoreData, setScoreData] = useState(scoreDefault);
+  useEffect(() => {
+  const unsub = onSnapshot(
+    doc(db, "scoreboard", "current"),
+    (snap) => {
+      if (snap.exists()) {
+        setScoreData(snap.data() as typeof scoreDefault);
+      }
+    }
+  );
+
+  return () => unsub();
+}, []);
 const [entryPlayers, setEntryPlayers] = useState<EntryPlayer[]>([]);
   const [players, setPlayers] = useState<Player[]>([]);
   const [leftName, setLeftName] = useState("");
@@ -260,6 +272,26 @@ const [awayTeam, setAwayTeam] = useState("스타강의반");
 
 const [homePredict, setHomePredict] = useState("0:0 승");
 const [awayPredict, setAwayPredict] = useState("0:0 승");
+useEffect(() => {
+  const unsub = onSnapshot(
+    doc(db, "teamProfile", "current"),
+    (snap) => {
+      if (!snap.exists()) return;
+
+      const data = snap.data();
+
+      if (data.side === "HOME") {
+        setHomePredict(data.predict || "");
+      }
+
+      if (data.side === "AWAY") {
+        setAwayPredict(data.predict || "");
+      }
+    }
+  );
+
+  return () => unsub();
+}, []);
 const [matchHome, setMatchHome] = useState("스타강의반");
 const [matchAway, setMatchAway] = useState("제이디");
 const [homeStarPlayer, setHomeStarPlayer] = useState("");
