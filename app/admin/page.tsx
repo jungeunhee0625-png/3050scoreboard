@@ -1157,7 +1157,8 @@ onChange={(e) => setAwayMessage(e.target.value)}
   <button
     onClick={() => {
       const updated = [...entryList];
-      updated[index].winner = "HOME";
+      updated[index].winner =
+  updated[index].winner === "HOME" ? "" : "HOME";
       setEntryList(updated);
     }}
     className={`rounded-xl p-4 text-[22px] font-black ${
@@ -1172,7 +1173,8 @@ onChange={(e) => setAwayMessage(e.target.value)}
   <button
     onClick={() => {
       const updated = [...entryList];
-      updated[index].winner = "AWAY";
+      updated[index].winner =
+  updated[index].winner === "AWAY" ? "" : "AWAY";
       setEntryList(updated);
     }}
     className={`rounded-xl p-4 text-[22px] font-black ${
