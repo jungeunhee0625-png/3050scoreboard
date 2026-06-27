@@ -44,7 +44,7 @@ const teamProfiles = {
 
   최강파파: {
     shortName: "Team최강파파",
-    logo: "Team최강파파",
+    logo: "최강파파",
     quote: "우리팀은 최강이다",
     coach: "(스페이드) PaPa P",
     subCoach: "(조커) Code T",
@@ -1537,7 +1537,7 @@ onChange={(e) => setAwayMessage(e.target.value)}
       {/* 중앙 */}
       <div className="absolute left-1/2 top-[260px] -translate-x-1/2 text-center">
 
-        <div className="text-[90px] font-black text-white">
+        <div className="text-[70px] font-black text-white">
           {teamProfiles[matchHome as keyof typeof teamProfiles].shortName}
         </div>
 
@@ -1545,7 +1545,7 @@ onChange={(e) => setAwayMessage(e.target.value)}
           VS
         </div>
 
-        <div className="text-[90px] font-black text-white">
+        <div className="text-[70px] font-black text-white">
           {teamProfiles[matchAway as keyof typeof teamProfiles].shortName}
         </div>
 
