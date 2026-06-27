@@ -43,8 +43,8 @@ const teamProfiles = {
   },
 
   최강파파: {
-    shortName: "최강파파",
-    logo: "최강파파",
+    shortName: "Team최강파파",
+    logo: "Team최강파파",
     quote: "우리팀은 최강이다",
     coach: "(스페이드) PaPa P",
     subCoach: "(조커) Code T",
