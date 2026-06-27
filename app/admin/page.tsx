@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { db } from "../../firebase";
 import { doc, setDoc, onSnapshot } from "firebase/firestore";
 
-const teams = ["외모지상주의", "월드클래스", "스타강의반", "최강파파", "제이디", "칸"];
+const teams = ["외모지상주의", "월드클래스", "1K", "최강파파", "제이디", "칸"];
 const teamProfiles = {
   제이디: {
     shortName: "JD",
@@ -18,15 +18,15 @@ const teamProfiles = {
     predict: "0:0 승",
   },
 
-  스타강의반: {
-    shortName: "스타강의반",
-    logo: "스타강의반",
-    quote: "목표는 우승! 이겨라!",
-    coach: "(잭) Bisu P",
-    subCoach: "(퀸) Una^^ Z",
-    protectedPlayer: "(퀸) Zergteacher Z",
+  "1K": {
+    shortName: "Team 1K",
+    logo: "Team 1K",
+    quote: "우승까지 남은 걸음 단 1K",
+    coach: "(조커) ilCho Z",
+    subCoach: "(갓) Kyak P",
+    protectedPlayer: "(잭) chl Z",
     seasonRecord: "S11",
-    message: "마지막으로 하는 스타라는 심정으로 최선을 다하겠습니다.",
+    message: "우승까지 남은 걸음 단 1K",
     predict: "0:0 승",
   },
 
@@ -89,7 +89,7 @@ const scoreDefault = {
   rightScore: 0,
   leftCode: "Z5",
   rightCode: "P7",
-  leftTeam: "스타강의반",
+  leftTeam: "Team 1K",
   rightTeam: "제이디",
   playerFontSize: 24,
 };
@@ -277,7 +277,7 @@ const [entryPlayers, setEntryPlayers] = useState<EntryPlayer[]>([]);
   const [leftSearch, setLeftSearch] = useState("");
   const [rightSearch, setRightSearch] = useState("");
 const [homeTeam, setHomeTeam] = useState("제이디");
-const [awayTeam, setAwayTeam] = useState("스타강의반");
+const [awayTeam, setAwayTeam] = useState("1K");
 const [mapRecords, setMapRecords] = useState<Record<string, MapRecord>>({});
 const [homePredict, setHomePredict] = useState("0:0 승");
 const [awayPredict, setAwayPredict] = useState("0:0 승");
@@ -336,7 +336,7 @@ useEffect(() => {
 
   return () => unsub();
 }, []);
-const [matchHome, setMatchHome] = useState("스타강의반");
+const [matchHome, setMatchHome] = useState("1K");
 const [matchAway, setMatchAway] = useState("제이디");
 const [homeStarPlayer, setHomeStarPlayer] = useState("");
 const [homeMessage, setHomeMessage] = useState("");
@@ -372,7 +372,7 @@ useEffect(() => {
       if (data.home?.shortName) {
         const homeTeamName = teams.find(
           (team) =>
-            teamProfiles[team as keyof typeof teamProfiles].shortName ===
+            teamProfiles[team as keyof typeof teamProfiles]?.shortName ===
             data.home.shortName
         );
 
@@ -382,7 +382,7 @@ useEffect(() => {
       if (data.away?.shortName) {
         const awayTeamName = teams.find(
           (team) =>
-            teamProfiles[team as keyof typeof teamProfiles].shortName ===
+            teamProfiles[team as keyof typeof teamProfiles]?.shortName ===
             data.away.shortName
         );
 
@@ -394,7 +394,7 @@ useEffect(() => {
   return () => unsub();
 }, []);
 const [entryHome, setEntryHome] = useState("제이디");
-const [entryAway, setEntryAway] = useState("스타강의반");
+const [entryAway, setEntryAway] = useState("1K");
 
 const [entryRound, setEntryRound] = useState("1라운드 1주차");
 const [entryHomeScore, setEntryHomeScore] = useState(0);
@@ -422,14 +422,14 @@ useEffect(() => {
 
       if (data.home?.shortName) {
         const homeTeamName = teams.find(
-          (team) => teamProfiles[team as keyof typeof teamProfiles].shortName === data.home.shortName
+          (team) => teamProfiles[team as keyof typeof teamProfiles]?.shortName === data.home.shortName
         );
         if (homeTeamName) setEntryHome(homeTeamName);
       }
 
       if (data.away?.shortName) {
         const awayTeamName = teams.find(
-          (team) => teamProfiles[team as keyof typeof teamProfiles].shortName === data.away.shortName
+          (team) => teamProfiles[team as keyof typeof teamProfiles]?.shortName === data.away.shortName
         );
         if (awayTeamName) setEntryAway(awayTeamName);
       }

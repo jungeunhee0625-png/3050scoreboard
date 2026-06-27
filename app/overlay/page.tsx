@@ -24,7 +24,7 @@ const defaultData = {
   leftCode: "Z5",
   rightCode: "P7",
 
-  leftTeam: "스타강의반",
+  leftTeam: "Team 1K",
   rightTeam: "제이디",
 
   playerFontSize: 24,

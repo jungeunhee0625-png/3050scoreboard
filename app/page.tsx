@@ -17,7 +17,7 @@ export default function Home() {
   const [leftCode, setLeftCode] = useState("Z5");
   const [rightCode, setRightCode] = useState("P7");
 
-  const [leftTeam, setLeftTeam] = useState("스타강의반");
+  const [leftTeam, setLeftTeam] = useState("1K");
   const [rightTeam, setRightTeam] = useState("제이디");
 
   return (
@@ -134,7 +134,7 @@ export default function Home() {
           >
             <option>외모지상주의</option>
             <option>월드클래스</option>
-            <option>스타강의반</option>
+            <option>Team 1K</option>
             <option>최강파파</option>
             <option>제이디</option>
             <option>칸</option>
@@ -147,7 +147,7 @@ export default function Home() {
           >
             <option>외모지상주의</option>
             <option>월드클래스</option>
-            <option>스타강의반</option>
+            <option>Team 1K</option>
             <option>최강파파</option>
             <option>제이디</option>
             <option>칸</option>
