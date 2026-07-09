@@ -134,7 +134,7 @@ export default function MatchupOverlayPage() {
         >
           <div
             style={{
-              fontSize: 92,
+              fontSize: 83,
               fontWeight: 900,
               color: "white",
               lineHeight: 1,
@@ -160,7 +160,7 @@ export default function MatchupOverlayPage() {
           <div
             style={{
               marginTop: 60,
-              fontSize: 92,
+              fontSize: 83,
               fontWeight: 900,
               color: "white",
               lineHeight: 1,
